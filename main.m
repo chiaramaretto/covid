@@ -132,3 +132,29 @@ plot(t,H,'b',t,C,'r',t,D,'y',t,R,'g','LineWidth',2);
 xlabel('Days'); ylabel('Number of individuals');
 legend('H','C','D', 'R'); title('SIR model')
 set(gca,'FontSize',14)
+
+%% Con matrice M variabile a senconda del numero di pazienti in terapia intensiva
+
+dist = 0.5; 
+C_max = 34.7 * N /100000;
+
+[t,X] = ode45(@(t,x)SIRHCMFunctionRestriction(t, x, beta, gamma, M,h,c,m, N, dist, C_max),[0, T],X0); %con runge-kutta
+S = X(:,1:n);
+I = X(:, n+1:2*n);
+R = X(:, 2*n+1:3*n);
+H = X(:, 3*n+1:4*n);
+C = X(:, 4*n+1:5*n);
+D = X(:, 5*n+1:6*n);
+
+figure(4)
+%plot(tt,S,'b',tt,I,'r',tt,R,'g','LineWidth',2);    %eulero
+plot(t,S,'b',t,I,'r',t,R,'g','LineWidth',2); 
+xlabel('Days'); ylabel('Number of individuals');
+legend('S','I','R'); title('SIR model')
+set(gca,'FontSize',14)
+
+figure(5)
+plot(t,H,'b',t,C,'r',t,D,'y',t,R,'g','LineWidth',2); 
+xlabel('Days'); ylabel('Number of individuals');
+legend('H','C','D', 'R'); title('SIR model')
+set(gca,'FontSize',14)
