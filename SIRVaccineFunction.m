@@ -11,8 +11,8 @@ function dx = SIRVaccineFunction(t, x, beta, gamma, M, N, T, h,c,m, omega, restr
     D = x(5*n+1:6*n);
 
 
-    mu = T * (omega .* S) ;
-    sum(S);
+    mu = T * (omega .* S) / sum(omega.* S);
+    mu = min(mu, S);
 
     if restrictions == true
         C_sum = sum(C);
