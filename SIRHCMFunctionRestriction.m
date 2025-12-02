@@ -10,11 +10,11 @@ function dx = SIRHCMFunctionRestriction(t, x, beta, gamma, M, h,c,m, N, dist, C_
     C = x(4*n+1:5*n);
     D = x(5*n+1:6*n);
     
-    C_sum = sum(C)
+    C_sum = sum(C);
     if C_sum < C_max/dist
-        M_change = M
+        M_change = M;
     else
-        M_change = 1/(dist*C_sum/C_max)*M
+        M_change = 1/(dist*C_sum/C_max)*M;
     end
     
     

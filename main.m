@@ -29,7 +29,7 @@ p = P / N;
 lambda = max(abs(eigs(M*diag(p))));
 gamma = 1/14;           % rate of recovery 
 beta = R_0*gamma/lambda;        % rate of infection
-T = 350; 
+T = 365; 
 S0 = P;
 I0 = ones(n,1);
 R0 = zeros(n,1);
@@ -158,3 +158,35 @@ plot(t,H,'b',t,C,'r',t,D,'y',t,R,'g','LineWidth',2);
 xlabel('Days'); ylabel('Number of individuals');
 legend('H','C','D', 'R'); title('SIR model')
 set(gca,'FontSize',14)
+
+%% Vaccinazione SENZA restrizioni
+vax_per_day = N/720; % ATTENZIONE: trovare dati sensati per l'Italia
+omega_C = [1; 1; 1; 1; 1; 1; 1; 1; 1];
+omega_M = [1; 1; 1; 1; 1; 2; 2; 4; 4];
+omega_S = [1; 1; 1; 1; 2; 4; 8; 16; 16];
+
+omegas = {omega_C, omega_M, omega_S};
+figure(6)
+for i=1:3
+    omega = omegas{i};
+    [t,X] = ode45(@(t,x) SIRVaccineFunction(t, x, beta, gamma, M, N, vax_per_day, h,c,m, omega, false, [], []),[0, T],X0); %con runge-kutta
+    S = X(:,1:n);
+    I = X(:, n+1:2*n);
+    R = X(:, 2*n+1:3*n);
+    H = X(:, 3*n+1:4*n);
+    C = X(:, 4*n+1:5*n);
+    D = X(:, 5*n+1:6*n);
+
+    %plot(tt,S,'b',tt,I,'r',tt,R,'g','LineWidth',2);    %eulero
+    subplot(3,2,i)
+    plot(t,S,'b',t,I,'r',t,R,'g','LineWidth',2); 
+    xlabel('Days'); ylabel('Number of individuals');
+    legend('S','I','R'); title('SIR model')
+    set(gca,'FontSize',14)
+    
+    subplot(3,2,i+3)
+    plot(t,H,'b',t,C,'r',t,D,'y',t,R,'g','LineWidth',2); 
+    xlabel('Days'); ylabel('Number of individuals');
+    legend('H','C','D', 'R'); title('SIR model')
+    set(gca,'FontSize',14)
+end
