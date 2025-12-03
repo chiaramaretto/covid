@@ -11,8 +11,12 @@ function dx = SIRVaccineFunction(t, x, beta, gamma, M, N, T, h,c,m, omega, restr
     D = x(5*n+1:6*n);
 
 
-    mu = T * (omega .* S) / sum(omega.* S);
-    mu = min(mu, S);
+    % CHIEDERE A PREZIOSI: PUò ESSERE CHE IL PROBLEMA SIA SOLO LA SCALA?
+    % Sembra che diminuendo mu vada
+    mu = T * (omega .* S); % / sum(omega.* S);
+    %mu = min(mu, S);
+    mu = max(mu, 0);
+    %mu = 0.02 * S;
 
     if restrictions == true
         C_sum = sum(C);
@@ -26,7 +30,7 @@ function dx = SIRVaccineFunction(t, x, beta, gamma, M, N, T, h,c,m, omega, restr
     end    
 
     % dS_i/dt
-    dx(1:n) = -beta * (S ./ N) .* (M_change * I) - mu;
+    dx(1:n) = -beta * (S ./ N) .* (M_change * I) - mu ;
     
     % dI_i/dt
     dx(n+1:2*n) = beta * (S ./ N) .* M_change * I - gamma * I;
