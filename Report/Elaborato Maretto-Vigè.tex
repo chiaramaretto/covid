@@ -1,0 +1,119 @@
+
+
+\documentclass[twoside]{report} % Imposta il tipo di documento (report)
+\PassOptionsToPackage{numbers}{natbib}
+
+\usepackage[utf8]{inputenc} % Consente l'input di caratteri UTF-8
+\usepackage[T1]{fontenc} % Imposta la codifica dei font
+\usepackage[italian]{babel} % Imposta la lingua del documento in italiano
+
+% Importa tutti i pacchetti necessari
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{minted}
+\usepackage[numbers]{natbib}  % oppure un altro stile
+%\usepackage{hyperref}
+%\usepackage{lipsum}
+%\usepackage{todonotes}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{comment}
+
+% Definisci i margini del documento
+\geometry{
+    a4paper,
+    left=25mm,
+    right=25mm,
+    top=30mm,
+    bottom=30mm,
+}
+
+% Imposta l'interlinea a 1.5
+\setstretch{1.5}
+
+
+\titlespacing{\chapter}{-20pt}{50pt}{20pt}
+
+\fancyhf{}
+\fancyhead[RO]{\rightmark} % Testatina per pagine dispari
+\fancyhead[LE]{\leftmark} % Testatina per pagine pari
+\fancyfoot[C]{\thepage} % Numero di pagina al centro del piè di pagina
+\pagestyle{fancy}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.6\textwidth]{polito_logo.jpg}\\[1cm] % Inserisci qui il comando per includere il logo
+    {\LARGE Modelli Matematici per la Biomedicina\par}
+    \vspace{1cm}
+    %{\Large \par}
+    %\vspace{1.5cm}
+    {\huge\bfseries Modelli epidemiologici in popolazioni di età eterogenee\par} %TROVA UN TITOLO MIGLIORE
+    %{\huge\bfseries \par}
+    \vspace{2cm}
+    \vspace{2cm}
+    {\Large Chiara Maretto 339401\\ Sophie Vigè 339268\par}
+    \vfill
+    {\large Anno Accademico 2025/2026\par}
+\end{titlepage}
+
+\begin{comment}
+Parte I:
+Introduzione
+1- Introduzione generale al problema (1 pagina)
+2- Osservazione fenomenologica, esigenza biomedica e relativa domanda (1 pagina)
+3- Modelli in letteratura (1 pagina)
+
+Parte II: Metodi
+4- Deduzione del modello matematico (3 pagine)
+5- Analisi qualitativa di alcune caratteristiche basilari del modello matematico (5 pagine)
+
+Parte III: Risultati
+6- Simulazioni numeriche (5 pagine)
+7- Quadro riassuntivo delle simulazioni numeriche (3 pagine)
+8- Discussione dei risultati e risposta suggerita dal modello matematico (max 1 pagina)
+\end{comment}
+
+\chapter{Introduzione}
+\section{Introduzione generale al problema}
+
+\section{Osservazione fenomenologica, esigenza biomedica e relativa domanda} 
+
+\section{Modelli in letteratura}
+\cite{vaccini_age}
+
+
+\chapter{Metodi}
+\section{Deduzione del modello matematico}
+
+\section{Analisi qualitativa di alcune caratteristiche basilari del modello matematico}
+
+\chapter{Risultati}
+\section{Simulazioni numeriche}
+
+\section{Quadro riassuntivo delle simulazioni numeriche}
+
+\section{Discussione dei risultati e risposta suggerita dal modello matematico}
+
+\bibliographystyle{plainnat}
+\bibliography{bibliografia}
+
+\end{document}
+
+
+

@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Elaborato Maretto-Vigè.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: plainnat.bst
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+Database file #1: bibliografia.bib
+Warning--empty journal in vaccini_age
+You've used 1 entry,
+            2773 wiz_defined-function locations,
+            596 strings with 4986 characters,
+and the built_in function-call counts, 395 in all, are:
+= -- 31
+> -- 21
+< -- 1
++ -- 7
+- -- 6
+* -- 25
+:= -- 67
+add.period$ -- 3
+call.type$ -- 1
+change.case$ -- 5
+chr.to.int$ -- 1
+cite$ -- 3
+duplicate$ -- 19
+empty$ -- 31
+format.name$ -- 9
+if$ -- 76
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 1
+newline$ -- 13
+num.names$ -- 4
+pop$ -- 12
+preamble$ -- 1
+purify$ -- 4
+quote$ -- 0
+skip$ -- 17
+stack$ -- 0
+substring$ -- 2
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 11
+warning$ -- 1
+while$ -- 3
+width$ -- 0
+write$ -- 18
+(There was 1 warning)
