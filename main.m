@@ -2,6 +2,18 @@ clear all
 close all
 clc
 
+%% Dati italiani
+% https://esploradati.istat.it/databrowser/#/it/censpop/dashboards
+% Sul sito istat ci sono più fasce d'età, con ampiezza 5 anni (fino a 99,
+% poi 100+)
+P = [2031476; 2409672; 2745119; 2921261; 2950359; 3012211; 3213337; ...
+    3357101; 3680853; 4380844; 4770527; 4848988; 4292746; ...
+    3672071; 3254150; 2887393; 2223335; 1481572; 654100; 162904; 21211];
+N = sum(P); % controllo anche che sia coerente col totale istat OK
+T_osp = 14.8; % tempo medio di degenza in ospedale
+gamma = 1/14; % teniamo lo stesso del paper
+%T_icu =; 
+
 %% ======================================================
 %            Simulazione del modello SIR
 % Model parameters
