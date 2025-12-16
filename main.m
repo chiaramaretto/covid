@@ -17,7 +17,7 @@ T_icu = 9;
 %% ======================================================
 %            Simulazione del modello SIR
 % Model parameters
-R_0 = 1; %5.7
+R_0 = 5; %5.7
 M = [19.2, 4.8, 3.0, 7.1, 3.7, 3.1, 2.3, 1.4, 1.4;
      4.8, 42.4, 6.4, 5.4, 7.5, 5.0, 1.8, 1.7, 1.7;
      3.0, 6.4, 20.7, 9.2, 7.1, 6.3, 2.0, 0.9, 0.9;
@@ -354,7 +354,9 @@ clc
 
 % NOTA: METTI DEI VALORI SENSATI QUI (E FAI VARIARE dist)
 dist = 0.1; % parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
-C_max = 34.7 * N /100000;
+% con 0.1 sembra che ci sia una seconda ondata (HA SENSO CHE SIA MINORE DI
+% 1??)
+C_max = 14*N/100000; %34.7 * N /100000;
 
 H0 = zeros(n,1);
 C0 = zeros(n,1);
@@ -372,7 +374,7 @@ D = X(:, 5*n+1:6*n);
 
 % --- Grafici restrizioni ---
 figure;
-tiledlayout(3,1);
+tiledlayout(4,1);
 
 nexttile; hold on;
 for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
@@ -384,6 +386,11 @@ title('Infected with Restrictions'); grid on;
 
 nexttile; hold on;
 for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
+title('ICU with Restrictions'); xlabel('Days'); grid on;
+
+nexttile; hold on;
+plot(t,sum(C,2)/N,'LineWidth',2);
+yline(C_max/(dist*N), '--k', 'LineWidth', 2, 'Label', 'C_{max}', 'LabelHorizontalAlignment', 'left');
 title('ICU with Restrictions'); xlabel('Days'); grid on;
 
 legend(age_groups,'Location','SouthOutside','NumColumns',5);

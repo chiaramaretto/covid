@@ -21,13 +21,13 @@ function dx = SIRHCMRecoveryFunctionRestriction(t, x, beta, gamma, M, h,c,m, N, 
     
     
     % dS_i/dt
-    dx(1:n) = -beta * (S ./ N) .* (M_change * I) + 1/6 * (R-H-D); %modifica
+    dx(1:n) = -beta * (S ./ N) .* (M_change * I) + 1/200 * (R-H-D); %modifica
     
     % dI_i/dt
     dx(n+1:2*n) = beta * (S ./ N) .* M_change * I - gamma * I;
     
     % dR_i/dt
-    dx(2*n+1:3*n) = gamma * I - 1/6 * (R-H-D); % modifica
+    dx(2*n+1:3*n) = gamma * I - 1/200 * (R-H-D); % modifica
 
     % dH_i/dt
     dx(3*n+1:4*n) = gamma * h .* I - 1/T_osp * H;
