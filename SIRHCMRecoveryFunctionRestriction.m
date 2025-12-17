@@ -15,7 +15,7 @@ function dx = SIRHCMRecoveryFunctionRestriction(t, x, beta, gamma, M, h,c,m, N, 
         M_change = M;
         disp("restrizioni tolte")
     else
-        M_change = 1/(dist*C_sum/C_max)*M;
+        M_change = M/(dist*C_sum/C_max);
         disp("restrizioni applicate")
     end
     

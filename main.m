@@ -17,7 +17,7 @@ T_icu = 9;
 %% ======================================================
 %            Simulazione del modello SIR
 % Model parameters
-R_0 = 5; %5.7
+R_0 = 3; %5.7
 M = [19.2, 4.8, 3.0, 7.1, 3.7, 3.1, 2.3, 1.4, 1.4;
      4.8, 42.4, 6.4, 5.4, 7.5, 5.0, 1.8, 1.7, 1.7;
      3.0, 6.4, 20.7, 9.2, 7.1, 6.3, 2.0, 0.9, 0.9;
@@ -44,6 +44,9 @@ T = 365*2;
 S0 = P;
 I0 = ones(n,1);
 R0 = zeros(n,1);
+H0 = zeros(n,1);
+C0 = zeros(n,1);
+M0 = zeros(n,1);
 
 age_groups = {'0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80+'};
 colors = lines(n);
@@ -51,6 +54,18 @@ colors = lines(n);
 h = [0.001; 0.003; 0.012; 0.032; 0.049; 0.102; 0.166; 0.243; 0.273];
 c = [0.050; 0.050; 0.050; 0.050; 0.063; 0.122; 0.274; 0.432; 0.709];
 m = [0.00002; 0.00006; 0.00030; 0.00080; 0.00150; 0.00600; 0.02200; 0.05100; 0.09300];
+
+dist = 5 ;% parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
+C_max = 14 * N /100000;%34.7 * N /100000;
+
+vax_per_day = 1/720;
+
+omega_C = [1; 1; 1; 1; 1; 1; 1; 1; 1]; % vaccinazioni uniformi per età
+omega_M = [1; 1; 1; 1; 1; 2; 2; 4; 4]; % campagna di vaccinazioni con intensificazione per fasce fragili
+omega_S = [1; 1; 1; 1; 2; 4; 8; 16; 16]; % campagna di vaccinazioni intensiva con intensificazione per fasce
+
+omegas = {omega_C, omega_M, omega_S};
+
 
 %% ======================================================
 %                   SIR BASE con fasce d'età
@@ -95,13 +110,6 @@ end
 
 clc
 
-h = [0.001; 0.003; 0.012; 0.032; 0.049; 0.102; 0.166; 0.243; 0.273];
-c = [0.050; 0.050; 0.050; 0.050; 0.063; 0.122; 0.274; 0.432; 0.709];
-m = [0.00002; 0.00006; 0.00030; 0.00080; 0.00150; 0.00600; 0.02200; 0.05100; 0.09300];
-
-H0 = zeros(n,1);
-C0 = zeros(n,1);
-M0 = zeros(n,1);
 X0 = [S0; I0 ; R0; H0; C0; M0];
 
 [t,X] = ode45(@(t,x)SIRHCMFunction(t, x, beta, gamma, M,h,c,m, N),[0, T],X0);
@@ -157,9 +165,7 @@ end
 
 clc
 
-% NOTA: METTI DEI VALORI SENSATI QUI (E FAI VARIARE dist)
-dist = 0.5; % parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
-C_max = 34.7 * N /100000;
+X0 = [S0; I0 ; R0; H0; C0; M0];
 
 [t,X] = ode45(@(t,x)SIRHCMFunctionRestriction(t, x, beta, gamma, M,h,c,m, N, dist, C_max),[0, T],X0);
 
@@ -198,16 +204,6 @@ clc
 
 X0 = [S0; I0 ; R0; H0; C0; M0];
 
-vax_per_day = 1/720;
-
-omega_C = [1; 1; 1; 1; 1; 1; 1; 1; 1]; % vaccinazioni uniformi per età
-omega_M = [1; 1; 1; 1; 1; 2; 2; 4; 4]; % campagna di vaccinazioni con intensificazione per fasce fragili
-omega_S = [1; 1; 1; 1; 2; 4; 8; 16; 16]; % campagna di vaccinazioni intensiva con intensificazione per fasce
-
-omegas = {omega_C, omega_M, omega_S};
-
-age_groups = {'0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80+'};
-colors = lines(n);
 figure;
 tiledlayout(3,3);  
 
@@ -254,19 +250,9 @@ legend(age_groups,'Location','SouthOutside','NumColumns',5);
 %% ======================================================
 %               Vaccinazione CON restrizioni
 
-vax_per_day = 1/720;
-
-dist = 5; 
-C_max = 34.7 * N /100000;
-
-omega_C = [1; 1; 1; 1; 1; 1; 1; 1; 1];
-omega_M = [1; 1; 1; 1; 1; 2; 2; 4; 4];
-omega_S = [1; 1; 1; 1; 2; 4; 8; 16; 16];
-
-omegas = {omega_C, omega_M, omega_S};
-
 figure;
-tiledlayout(3,3);  
+tiledlayout(3,3); 
+X0 = [S0; I0 ; R0; H0; C0; M0];
 
 for i = 1:3
     omega = omegas{i};
@@ -305,13 +291,6 @@ end
 %% Con uscite da ospedale e icu
 clc
 
-h = [0.001; 0.003; 0.012; 0.032; 0.049; 0.102; 0.166; 0.243; 0.273];
-c = [0.050; 0.050; 0.050; 0.050; 0.063; 0.122; 0.274; 0.432; 0.709];
-m = [0.00002; 0.00006; 0.00030; 0.00080; 0.00150; 0.00600; 0.02200; 0.05100; 0.09300];
-
-H0 = zeros(n,1);
-C0 = zeros(n,1);
-M0 = zeros(n,1);
 X0 = [S0; I0 ; R0; H0; C0; M0];
 
 [t,X] = ode45(@(t,x)SIRHCMRecoveryFunction(t, x, beta, gamma, M,h,c,m, T_osp, T_icu, N),[0, T],X0);
@@ -352,15 +331,6 @@ end
 
 clc
 
-% NOTA: METTI DEI VALORI SENSATI QUI (E FAI VARIARE dist)
-dist = 0.1; % parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
-% con 0.1 sembra che ci sia una seconda ondata (HA SENSO CHE SIA MINORE DI
-% 1??)
-C_max = 14*N/100000; %34.7 * N /100000;
-
-H0 = zeros(n,1);
-C0 = zeros(n,1);
-M0 = zeros(n,1);
 X0 = [S0; I0 ; R0; H0; C0; M0];
 
 [t,X] = ode45(@(t,x)SIRHCMRecoveryFunctionRestriction(t, x, beta, gamma, M,h,c,m, N, dist, C_max, T_osp, T_icu),[0, T],X0);
@@ -397,4 +367,47 @@ legend(age_groups,'Location','SouthOutside','NumColumns',5);
 
 for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k)); % ok
+end
+
+%%
+% Modello con vaccini, possibili restrizioni e recovery
+clc
+
+figure;
+tiledlayout(3,3);  
+
+X0 = [S0; I0 ; R0; H0; C0; M0];
+
+for i = 1:3
+    omega = omegas{i};
+
+    [t,X] = ode45(@(t,x) SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C_max, omega, T_osp, T_icu, true, vax_per_day),[0, T],X0);
+
+    S = X(:,1:n); 
+    I = X(:, n+1:2*n);
+    R = X(:, 2*n+1:3*n);
+    H = X(:, 3*n+1:4*n);
+    C = X(:, 4*n+1:5*n);
+    D = X(:, 5*n+1:6*n);
+
+    % --- S(t) ---
+    nexttile; hold on;
+    for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+    title(['Susceptible - \omega_' num2str(i)]); grid on;
+
+    % --- I(t) ---
+    nexttile; hold on;
+    for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+    title(['Infected - \omega_' num2str(i)]); grid on;
+
+    % --- ICU C(t) ---
+    nexttile; hold on;
+    for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+    title(['ICU - \omega_' num2str(i)]); grid on;
+end
+
+legend(age_groups,'Location','SouthOutside','NumColumns',5);
+
+for k=1:9
+    P(k) - (S(end,k) + I(end,k) + R(end,k))
 end
