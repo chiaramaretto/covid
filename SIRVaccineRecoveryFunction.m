@@ -15,8 +15,12 @@ function dx = SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C
     C = x(4*n+1:5*n);
     D = x(5*n+1:6*n);
   
-    mu = T * (omega .* S); 
-    mu = max(mu, 0);
+    if t > 300
+        mu = T * (omega .* S); 
+        mu = max(mu, 0);
+    else
+        mu = zeros(n, 1); 
+    end
 
     if restrictions == true
         C_sum = sum(C);

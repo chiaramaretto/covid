@@ -71,9 +71,9 @@ C_max = 14 * N /100000;%34.7 * N /100000;
 
 vax_per_day = 1/720;
 
-omega_C = [1; 1; 1; 1; 1; 1; 1; 1; 1]; % vaccinazioni uniformi per età
-omega_M = [1; 1; 1; 1; 1; 2; 2; 4; 4]; % campagna di vaccinazioni con intensificazione per fasce fragili
-omega_S = [1; 1; 1; 1; 2; 4; 8; 16; 16]; % campagna di vaccinazioni intensiva con intensificazione per fasce
+omega_C = [0; 0; 1; 1; 1; 1; 1; 1; 1]; % vaccinazioni uniformi per età
+omega_M = [0; 0; 1; 1; 1; 2; 2; 4; 4]; % campagna di vaccinazioni con intensificazione per fasce fragili
+omega_S = [0; 0; 1; 1; 2; 4; 8; 16; 16]; % campagna di vaccinazioni intensiva con intensificazione per fasce
 
 omegas = {omega_C, omega_M, omega_S};
 
