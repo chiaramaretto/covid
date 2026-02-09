@@ -2,22 +2,21 @@ clear all
 close all
 clc
 
-%% Dati italiani
-% https://esploradati.istat.it/databrowser/#/it/censpop/dashboards
-% Sul sito istat ci sono più fasce d'età, con ampiezza 5 anni (fino a 99,
-% poi 100+)
-P = [2031476; 2409672; 2745119; 2921261; 2950359; 3012211; 3213337; ...
-    3357101; 3680853; 4380844; 4770527; 4848988; 4292746; ...
-    3672071; 3254150; 2887393; 2223335; 1481572; 654100; 162904; 21211];
+age_groups = {'0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80+'};
+%% Italia
+P = [4441148; 5666380; 5962570; 6570438; 8061697;9619515; 7964817; 6141543; 4543122];
 N = sum(P); % controllo anche che sia coerente col totale istat OK
-T_osp = 14.8; % tempo medio di degenza in ospedale
-gamma = 1/14; % teniamo lo stesso del paper
-T_icu = 9; 
+M = creaMatriceItalia();
+n = size(M, 1);
 
-%% ======================================================
-%            Simulazione del modello SIR
-% Model parameters
-R_0 = 3; %5.7
+figure;
+heatmap(age_groups, age_groups, M);
+title('Matrice di Contatto Sociale Italia');
+xlabel('Età Contatto');
+ylabel('Età Partecipante');
+
+%% Washington
+
 M = [19.2, 4.8, 3.0, 7.1, 3.7, 3.1, 2.3, 1.4, 1.4;
      4.8, 42.4, 6.4, 5.4, 7.5, 5.0, 1.8, 1.7, 1.7;
      3.0, 6.4, 20.7, 9.2, 7.1, 6.3, 2.0, 0.9, 0.9;
@@ -30,9 +29,21 @@ M = [19.2, 4.8, 3.0, 7.1, 3.7, 3.1, 2.3, 1.4, 1.4;
 
 n = size(M, 1);
 
-% Popolazione italiana (per fasce 0-9, ..., 80+)
 P = [910147; 963765; 1049452; 1141263; 959404; 951386; 904071; 561572; 265250];
 N = sum(P);
+figure;
+heatmap(age_groups, age_groups, M);
+title('Matrice di Contatto Sociale Washington');
+xlabel('Età Contatto');
+ylabel('Età Partecipante');
+%% ======================================================
+%            Simulazione del modello SIR
+% Model parameters
+R_0 = 3; %5.7
+T_osp = 14.8; % tempo medio di degenza in ospedale
+gamma = 1/14; % teniamo lo stesso del paper
+T_icu = 9; 
+
 
 % Calcolo proporzioni
 p = P / N;
@@ -55,7 +66,7 @@ h = [0.001; 0.003; 0.012; 0.032; 0.049; 0.102; 0.166; 0.243; 0.273];
 c = [0.050; 0.050; 0.050; 0.050; 0.063; 0.122; 0.274; 0.432; 0.709];
 m = [0.00002; 0.00006; 0.00030; 0.00080; 0.00150; 0.00600; 0.02200; 0.05100; 0.09300];
 
-dist = 5 ;% parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
+dist = .1;% parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
 C_max = 14 * N /100000;%34.7 * N /100000;
 
 vax_per_day = 1/720;
@@ -77,7 +88,7 @@ X0 = [S0; I0 ; R0];
 [t,X] = ode45(@(t,x)SIRAgeFunction(t, x, beta, gamma, M, N),[0, T],X0);
 S = X(:,1:n);   I = X(:, n+1:2*n);   R = X(:, 2*n+1:3*n);
 
-age_groups = {'0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80+'};
+
 colors = lines(n);
 
 % --- Grafici S, I, R per fasce ---
@@ -181,15 +192,15 @@ figure;
 tiledlayout(3,1);
 
 nexttile; hold on;
-for k=1:n, plot(t,S(:,k),'LineWidth',2,'Color',colors(k,:)); end
+for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
 title('Susceptible with Restrictions'); grid on;
 
 nexttile; hold on;
-for k=1:n, plot(t,I(:,k),'LineWidth',2,'Color',colors(k,:)); end
+for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
 title('Infected with Restrictions'); grid on;
 
 nexttile; hold on;
-for k=1:n, plot(t,C(:,k),'LineWidth',2,'Color',colors(k,:)); end
+for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
 title('ICU with Restrictions'); xlabel('Days'); grid on;
 
 legend(age_groups,'Location','SouthOutside','NumColumns',5);
