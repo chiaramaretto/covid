@@ -9,11 +9,17 @@ N = sum(P); % controllo anche che sia coerente col totale istat OK
 M = creaMatriceItalia();
 n = size(M, 1);
 
+M =  (M+M')/2;
+
 figure;
 heatmap(age_groups, age_groups, M);
 title('Matrice di Contatto Sociale Italia');
 xlabel('Età Contatto');
 ylabel('Età Partecipante');
+saveas(gcf, ['M_Italia', '.png']); 
+
+stato = "Italia";
+
 
 %% Washington
 
@@ -31,11 +37,16 @@ n = size(M, 1);
 
 P = [910147; 963765; 1049452; 1141263; 959404; 951386; 904071; 561572; 265250];
 N = sum(P);
+
 figure;
 heatmap(age_groups, age_groups, M);
 title('Matrice di Contatto Sociale Washington');
 xlabel('Età Contatto');
 ylabel('Età Partecipante');
+saveas(gcf, ['M_Washington', '.png']); 
+
+stato = "Washington";
+
 %% ======================================================
 %            Simulazione del modello SIR
 % Model parameters
@@ -115,6 +126,9 @@ for k=1:9 % controllo
     % ogni i
 end
 
+fname = sprintf('SIR_%s.png', char(stato));
+saveas(gcf, fname);
+
 %% ======================================================
 %               SIR con H,C,D sottoinsiemi di R
 %               Parametri H, C, D (Ospedale, ICU, Morti)
@@ -150,6 +164,9 @@ title('Deaths M(t)'); ylabel('M'); xlabel('Days'); grid on;
 
 legend(age_groups,'Location','SouthOutside','NumColumns',5);
 
+fname = sprintf('SIRHCD1_%s.png', char(stato));
+saveas(gcf, fname);
+
 figure;
 tiledlayout(3,1);
 
@@ -170,6 +187,9 @@ legend(age_groups,'Location','SouthOutside','NumColumns',5);
 for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k)); % ok
 end
+
+fname = sprintf('SIRHCD2_%s.png', char(stato));
+saveas(gcf, fname);
 
 %% ======================================================
 %       Modello con restrizioni su M in base alle ICU
@@ -208,6 +228,9 @@ legend(age_groups,'Location','SouthOutside','NumColumns',5);
 for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k)); %ok
 end
+
+fname = sprintf('Restrizioni_%s.png', char(stato));
+saveas(gcf, fname);
 
 %% ======================================================
 %               Vaccinazione SENZA restrizioni
@@ -256,7 +279,8 @@ end
 legend(age_groups,'Location','SouthOutside','NumColumns',5);
 
 
-
+fname = sprintf('Vaccini_%s.png', char(stato));
+saveas(gcf, fname);
 
 %% ======================================================
 %               Vaccinazione CON restrizioni
@@ -299,6 +323,10 @@ for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k))
 end
 
+
+fname = sprintf('Vaccini_restrizioni_%s.png', char(stato));
+saveas(gcf, fname); 
+
 %% Con uscite da ospedale e icu
 clc
 
@@ -335,6 +363,8 @@ for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k)); % ok
 end
 
+fname = sprintf('SIRHCD_recovery_%s.png', char(stato));
+saveas(gcf, fname); 
 
 %% ======================================================
 %       Modello con restrizioni su M in base alle ICU e uscite da ospedale
@@ -380,6 +410,10 @@ for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k)); % ok
 end
 
+
+fname = sprintf('Restrizioni_recovery_%s.png', char(stato));
+saveas(gcf, fname); 
+
 %%
 % Modello con vaccini, possibili restrizioni e recovery
 clc
@@ -422,3 +456,7 @@ legend(age_groups,'Location','SouthOutside','NumColumns',5);
 for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k))
 end
+
+
+fname = sprintf('Vaccini_restrizioni_recovery_%s.png', char(stato));
+saveas(gcf, fname); ; 
