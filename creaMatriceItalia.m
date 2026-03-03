@@ -55,7 +55,7 @@ function [contact_matrix, labels] = creaMatriceItalia()
         end
     end
 
-    contact_matrix = C_ij ./ N_i; 
+    contact_matrix = 4*C_ij ./ N_i; 
     
     contact_matrix(isnan(contact_matrix) | isinf(contact_matrix)) = 0;
 end

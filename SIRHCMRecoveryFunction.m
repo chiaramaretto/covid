@@ -1,4 +1,7 @@
 function dx = SIRHCMRecoveryFunction(t, x, beta, gamma, M, h,c,m, T_osp, T_icu, N)
+    % versione 
+    % 1) no perdita immunità
+    % 2) H e C non sono più accumulatori (c'è uscita)
     n = size(M, 1); %dovrebbe essere 9
     dx = zeros(6*n, 1);
     

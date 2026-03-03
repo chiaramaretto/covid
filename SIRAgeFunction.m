@@ -19,7 +19,7 @@ function dx = SIRAgeFunction(t, x, beta, gamma, M, N)
     % per verificare se la condizione R_0=1 è adeguata per prevedere il
     % picco
     R_0 = max(eig(diag(S./N)*M));
-    if abs(R_0 - gamma/beta)<10^-1
+    if abs(R_0 - gamma/beta)<0.2
         beta/gamma*R_0
         t
     end

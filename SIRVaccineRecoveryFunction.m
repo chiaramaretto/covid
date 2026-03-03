@@ -1,4 +1,4 @@
-function dx = SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C_max, omega, T_osp, T_icu, restrictions, T)
+function dx = SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C_max, omega, T_osp, T_icu, restrictions, T, ritardo)
 % Versione con 
 % 1) vaccini
 % 2) restrizioni opzionali
@@ -15,12 +15,18 @@ function dx = SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C
     C = x(4*n+1:5*n);
     D = x(5*n+1:6*n);
   
-    if t > 300
+    if ritardo
+        if t > 300
+            mu = T * (omega .* S); 
+            mu = max(mu, 0);
+        else
+            mu = zeros(n, 1); 
+        end
+    else
         mu = T * (omega .* S); 
         mu = max(mu, 0);
-    else
-        mu = zeros(n, 1); 
     end
+    
 
     if restrictions == true
         C_sum = sum(C);

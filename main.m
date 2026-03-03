@@ -9,7 +9,13 @@ N = sum(P); % controllo anche che sia coerente col totale istat OK
 M = creaMatriceItalia();
 n = size(M, 1);
 
-M =  (M+M')/2;
+%M =  (M+M')/2;
+for i=1:n
+    for j=1:n
+        M2(i,j) = (P(i)*M(i,j) + P(j)*M(j,i))/(P(i)+P(j));
+    end
+end
+M = M2;
 
 figure;
 heatmap(age_groups, age_groups, M);
@@ -160,7 +166,7 @@ title('Critical Care C(t)'); ylabel('C'); grid on;
 
 nexttile; hold on;
 for k=1:n, plot(t,D(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
-title('Deaths M(t)'); ylabel('M'); xlabel('Days'); grid on;
+title('Deaths D(t)'); ylabel('D'); xlabel('Days'); grid on;
 
 legend(age_groups,'Location','SouthOutside','NumColumns',5);
 
@@ -197,40 +203,44 @@ saveas(gcf, fname);
 clc
 
 X0 = [S0; I0 ; R0; H0; C0; M0];
+dist_range = [0.1, 0.2, 0.3, 0.4];
 
-[t,X] = ode45(@(t,x)SIRHCMFunctionRestriction(t, x, beta, gamma, M,h,c,m, N, dist, C_max),[0, T],X0);
-
-S = X(:,1:n); 
-I = X(:, n+1:2*n);
-R = X(:, 2*n+1:3*n);
-H = X(:, 3*n+1:4*n);
-C = X(:, 4*n+1:5*n);
-D = X(:, 5*n+1:6*n);
-
-% --- Grafici restrizioni ---
-figure;
-tiledlayout(3,1);
-
-nexttile; hold on;
-for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
-title('Susceptible with Restrictions'); grid on;
-
-nexttile; hold on;
-for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
-title('Infected with Restrictions'); grid on;
-
-nexttile; hold on;
-for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
-title('ICU with Restrictions'); xlabel('Days'); grid on;
-
-legend(age_groups,'Location','SouthOutside','NumColumns',5);
-
-for k=1:9
-    P(k) - (S(end,k) + I(end,k) + R(end,k)); %ok
+for i=1:4
+    dist = dist_range(i);
+    [t,X] = ode45(@(t,x)SIRHCMFunctionRestriction(t, x, beta, gamma, M,h,c,m, N, dist, C_max),[0, T],X0);
+    
+    S = X(:,1:n); 
+    I = X(:, n+1:2*n);
+    R = X(:, 2*n+1:3*n);
+    H = X(:, 3*n+1:4*n);
+    C = X(:, 4*n+1:5*n);
+    D = X(:, 5*n+1:6*n);
+    
+    % --- Grafici restrizioni ---
+    figure;
+    tiledlayout(3,1);
+    
+    nexttile; hold on;
+    for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
+    title(sprintf('Susceptible with Restrictions (%g)', dist)); grid on;
+    
+    nexttile; hold on;
+    for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
+    title(sprintf('Infected with Restrictions (%g)', dist)); grid on;
+    
+    nexttile; hold on;
+    for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',2,'Color',colors(k,:)); end
+    title(sprintf('ICU with Restrictions (%g)', dist)); xlabel('Days'); grid on;
+    
+    legend(age_groups,'Location','SouthOutside','NumColumns',5);
+    
+    for k=1:9
+        P(k) - (S(end,k) + I(end,k) + R(end,k)); %ok
+    end
+    
+    fname = sprintf('Restrizioni_%s_%g.png', char(stato), dist);
+    saveas(gcf, fname);
 end
-
-fname = sprintf('Restrizioni_%s.png', char(stato));
-saveas(gcf, fname);
 
 %% ======================================================
 %               Vaccinazione SENZA restrizioni
@@ -276,7 +286,9 @@ for i = 1:3
     end
     
 end
-legend(age_groups,'Location','SouthOutside','NumColumns',5);
+
+lgd = legend(age_groups,'NumColumns',5);
+lgd.Layout.Tile = 'south';
 
 
 fname = sprintf('Vaccini_%s.png', char(stato));
@@ -288,6 +300,7 @@ saveas(gcf, fname);
 figure;
 tiledlayout(3,3); 
 X0 = [S0; I0 ; R0; H0; C0; M0];
+dist = 0.1;
 
 for i = 1:3
     omega = omegas{i};
@@ -303,21 +316,22 @@ for i = 1:3
 
     % --- S(t) ---
     nexttile; hold on;
-    for k=1:n, plot(t,S(:,k),'LineWidth',1.7,'Color',colors(k,:)); end
+    for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
     title(['Susceptible - \omega_' num2str(i)]); grid on;
 
     % --- I(t) ---
     nexttile; hold on;
-    for k=1:n, plot(t,I(:,k),'LineWidth',1.7,'Color',colors(k,:)); end
+    for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
     title(['Infected - \omega_' num2str(i)]); grid on;
 
     % --- ICU C(t) ---
     nexttile; hold on;
-    for k=1:n, plot(t,C(:,k),'LineWidth',1.7,'Color',colors(k,:)); end
+    for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
     title(['ICU - \omega_' num2str(i)]); grid on;
 end
 
-legend(age_groups,'Location','SouthOutside','NumColumns',5);
+lgd = legend(age_groups,'NumColumns',5);
+lgd.Layout.Tile = 'south';
 
 for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k))
@@ -327,7 +341,7 @@ end
 fname = sprintf('Vaccini_restrizioni_%s.png', char(stato));
 saveas(gcf, fname); 
 
-%% Con uscite da ospedale e icu
+%% Con uscite da ospedale e icu 
 clc
 
 X0 = [S0; I0 ; R0; H0; C0; M0];
@@ -355,7 +369,7 @@ title('Critical Care C(t)'); ylabel('C'); grid on;
 
 nexttile; hold on;
 for k=1:n, plot(t,D(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
-title('Deaths M(t)'); ylabel('M'); xlabel('Days'); grid on;
+title('Deaths D(t)'); ylabel('D'); xlabel('Days'); grid on;
 
 legend(age_groups,'Location','SouthOutside','NumColumns',5);
 
@@ -366,12 +380,13 @@ end
 fname = sprintf('SIRHCD_recovery_%s.png', char(stato));
 saveas(gcf, fname); 
 
+
 %% ======================================================
 %       Modello con restrizioni su M in base alle ICU e uscite da ospedale
 %       e icu
 
 clc
-
+dist = 0.1;
 X0 = [S0; I0 ; R0; H0; C0; M0];
 
 [t,X] = ode45(@(t,x)SIRHCMRecoveryFunctionRestriction(t, x, beta, gamma, M,h,c,m, N, dist, C_max, T_osp, T_icu),[0, T],X0);
@@ -414,19 +429,21 @@ end
 fname = sprintf('Restrizioni_recovery_%s.png', char(stato));
 saveas(gcf, fname); 
 
-%%
+%% modello completo senza ritardo nei vaccini
 % Modello con vaccini, possibili restrizioni e recovery
 clc
 
 figure;
 tiledlayout(3,3);  
-
+dist = 0.1;
 X0 = [S0; I0 ; R0; H0; C0; M0];
+
+ritardo=false;
 
 for i = 1:3
     omega = omegas{i};
 
-    [t,X] = ode45(@(t,x) SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C_max, omega, T_osp, T_icu, true, vax_per_day),[0, T],X0);
+    [t,X] = ode45(@(t,x) SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C_max, omega, T_osp, T_icu, true, vax_per_day,ritardo),[0, T],X0);
 
     S = X(:,1:n); 
     I = X(:, n+1:2*n);
@@ -451,7 +468,8 @@ for i = 1:3
     title(['ICU - \omega_' num2str(i)]); grid on;
 end
 
-legend(age_groups,'Location','SouthOutside','NumColumns',5);
+lgd = legend(age_groups,'NumColumns',5);
+lgd.Layout.Tile = 'south';
 
 for k=1:9
     P(k) - (S(end,k) + I(end,k) + R(end,k))
@@ -459,4 +477,55 @@ end
 
 
 fname = sprintf('Vaccini_restrizioni_recovery_%s.png', char(stato));
+saveas(gcf, fname); ; 
+
+%% modello completo con ritardo nei vaccini
+% Modello con vaccini, possibili restrizioni e recovery
+clc
+
+dist = 0.1;
+figure;
+tiledlayout(3,3);  
+
+X0 = [S0; I0 ; R0; H0; C0; M0];
+
+ritardo=true;
+
+for i = 1:3
+    omega = omegas{i};
+
+    [t,X] = ode45(@(t,x) SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C_max, omega, T_osp, T_icu, true, vax_per_day,ritardo),[0, T],X0);
+
+    S = X(:,1:n); 
+    I = X(:, n+1:2*n);
+    R = X(:, 2*n+1:3*n);
+    H = X(:, 3*n+1:4*n);
+    C = X(:, 4*n+1:5*n);
+    D = X(:, 5*n+1:6*n);
+
+    % --- S(t) ---
+    nexttile; hold on;
+    for k=1:n, plot(t,S(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+    title(['Susceptible - \omega_' num2str(i)]); grid on;
+
+    % --- I(t) ---
+    nexttile; hold on;
+    for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+    title(['Infected - \omega_' num2str(i)]); grid on;
+
+    % --- ICU C(t) ---
+    nexttile; hold on;
+    for k=1:n, plot(t,C(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+    title(['ICU - \omega_' num2str(i)]); grid on;
+end
+
+lgd = legend(age_groups,'NumColumns',5);
+lgd.Layout.Tile = 'south';
+
+for k=1:9
+    P(k) - (S(end,k) + I(end,k) + R(end,k))
+end
+
+
+fname = sprintf('Vaccini_ritardo_restrizioni_recovery_%s.png', char(stato));
 saveas(gcf, fname); ; 
