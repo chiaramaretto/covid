@@ -1,5 +1,5 @@
 function dx = SIRVaccineFunction(t, x, beta, gamma, M, N, T, h,c,m, omega, restrictions, C_max, dist)
-    n = size(M, 1); %dovrebbe essere 9
+    n = size(M, 1); 
     dx = zeros(6*n, 1);
     
     % Suddivisione del vettore di stato
@@ -42,6 +42,6 @@ function dx = SIRVaccineFunction(t, x, beta, gamma, M, N, T, h,c,m, omega, restr
     % dC_i/dt
     dx(4*n+1:5*n) = gamma * h .* c .* I;
 
-    % dM_i/dt
+    % dD_i/dt
     dx(5*n+1:6*n) = gamma * m .* I;
 end

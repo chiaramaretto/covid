@@ -5,11 +5,10 @@ clc
 age_groups = {'0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80+'};
 %% Italia
 P = [4441148; 5666380; 5962570; 6570438; 8061697;9619515; 7964817; 6141543; 4543122];
-N = sum(P); % controllo anche che sia coerente col totale istat OK
+N = sum(P);
 M = creaMatriceItalia();
 n = size(M, 1);
 
-%M =  (M+M')/2;
 for i=1:n
     for j=1:n
         M2(i,j) = (P(i)*M(i,j) + P(j)*M(j,i))/(P(i)+P(j));
@@ -54,9 +53,8 @@ saveas(gcf, ['M_Washington', '.png']);
 stato = "Washington";
 
 %% ======================================================
-%            Simulazione del modello SIR
 % Model parameters
-R_0 = 3; %5.7
+R_0 = 3; 
 T_osp = 14.8; % tempo medio di degenza in ospedale
 gamma = 1/14; % teniamo lo stesso del paper
 T_icu = 9; 
@@ -84,7 +82,7 @@ c = [0.050; 0.050; 0.050; 0.050; 0.063; 0.122; 0.274; 0.432; 0.709];
 m = [0.00002; 0.00006; 0.00030; 0.00080; 0.00150; 0.00600; 0.02200; 0.05100; 0.09300];
 
 dist = .1;% parametro che regola il livello di restrizioni applicate (più è alto, maggiori le restrizioni)
-C_max = 14 * N /100000;%34.7 * N /100000;
+C_max = 14 * N /100000;
 
 vax_per_day = 1/720;
 
@@ -97,6 +95,7 @@ omegas = {omega_C, omega_M, omega_S};
 
 %% ======================================================
 %                   SIR BASE con fasce d'età
+%            questo modello non è stato riportato nell'elaborato
 
 clc
 
@@ -138,6 +137,7 @@ saveas(gcf, fname);
 %% ======================================================
 %               SIR con H,C,D sottoinsiemi di R
 %               Parametri H, C, D (Ospedale, ICU, Morti)
+%               Corrispondente a SCENARIO 1 dell'elaborato
 
 clc
 
@@ -151,6 +151,18 @@ R = X(:, 2*n+1:3*n);
 H = X(:, 3*n+1:4*n);
 C = X(:, 4*n+1:5*n);
 D = X(:, 5*n+1:6*n);
+
+% per verificare se la condizione R_0=1 è adeguata per prevedere il
+    % picco
+    for temp = 1:length(t)
+        R_t = beta/gamma*max(eig(diag(S(temp,:)./N)*M));
+        if abs(1 - R_t) < 0.025 
+            R_t
+            t(temp)
+            break
+        end
+    end
+    
 
 % --- Grafici H, C, M per fasce ---
 figure;
@@ -182,6 +194,7 @@ title('Susceptible S(t)'); ylabel('S'); grid on;
 
 nexttile; hold on;
 for k=1:n, plot(t,I(:,k)/P(k),'LineWidth',1.7,'Color',colors(k,:)); end
+xline(t(temp),'k--','LineWidth',1.5);   % linea verticale in corrispondenza di R_t circa 1
 title('Infected I(t)'); ylabel('I'); grid on;
 
 nexttile; hold on;
@@ -199,6 +212,7 @@ saveas(gcf, fname);
 
 %% ======================================================
 %       Modello con restrizioni su M in base alle ICU
+%       corrispondente allo SCENARIO 2 nell'elaborato
 
 clc
 
@@ -244,6 +258,7 @@ end
 
 %% ======================================================
 %               Vaccinazione SENZA restrizioni
+%               corrispondente allo SCENARIO 3 dell'elaborato
 clc
 
 X0 = [S0; I0 ; R0; H0; C0; M0];
@@ -296,6 +311,7 @@ saveas(gcf, fname);
 
 %% ======================================================
 %               Vaccinazione CON restrizioni
+%             corrispondente allo SCENARIO 4 dell'elaborato
 
 figure;
 tiledlayout(3,3); 
@@ -342,6 +358,7 @@ fname = sprintf('Vaccini_restrizioni_%s.png', char(stato));
 saveas(gcf, fname); 
 
 %% Con uscite da ospedale e icu 
+% questo scenario non è stato riportato nell'elaborato
 clc
 
 X0 = [S0; I0 ; R0; H0; C0; M0];
@@ -384,6 +401,7 @@ saveas(gcf, fname);
 %% ======================================================
 %       Modello con restrizioni su M in base alle ICU e uscite da ospedale
 %       e icu
+%      questo modello non è stato riportato nell'elaborato
 
 clc
 dist = 0.1;
@@ -431,6 +449,7 @@ saveas(gcf, fname);
 
 %% modello completo senza ritardo nei vaccini
 % Modello con vaccini, possibili restrizioni e recovery
+% corrispondente allo SCENARIO 5 (senza ritardo) dell'elaborato
 clc
 
 figure;
@@ -481,6 +500,7 @@ saveas(gcf, fname); ;
 
 %% modello completo con ritardo nei vaccini
 % Modello con vaccini, possibili restrizioni e recovery
+% corrispondente allo SCENARIO 5 (con ritardo) dell'elaborato
 clc
 
 dist = 0.1;

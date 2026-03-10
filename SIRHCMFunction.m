@@ -1,5 +1,5 @@
 function dx = SIRHCMFunction(t, x, beta, gamma, M, h,c,m, N)
-    n = size(M, 1); %dovrebbe essere 9
+    n = size(M, 1); 
     dx = zeros(6*n, 1);
     
     % Suddivisione del vettore di stato
@@ -27,4 +27,5 @@ function dx = SIRHCMFunction(t, x, beta, gamma, M, h,c,m, N)
 
     % dM_i/dt
     dx(5*n+1:6*n) = gamma * m .* I;
+
 end

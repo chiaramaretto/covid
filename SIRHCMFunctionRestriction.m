@@ -1,5 +1,5 @@
 function dx = SIRHCMFunctionRestriction(t, x, beta, gamma, M, h,c,m, N, dist, C_max)
-    n = size(M, 1); %dovrebbe essere 9
+    n = size(M, 1);
     dx = zeros(6*n, 1);
     
     % Suddivisione del vettore di stato

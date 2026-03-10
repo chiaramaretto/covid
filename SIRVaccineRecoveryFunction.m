@@ -4,7 +4,7 @@ function dx = SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C
 % 2) restrizioni opzionali
 % 3) perdita di immunità
 % 4) svuotamento ospedale
-    n = size(M, 1); %dovrebbe essere 9
+    n = size(M, 1);
     dx = zeros(6*n, 1);
     
     % Suddivisione del vettore di stato
@@ -54,6 +54,6 @@ function dx = SIRVaccineRecoveryFunction(t, x, beta, gamma, M, h,c,m, N, dist, C
     % dC_i/dt
     dx(4*n+1:5*n) = gamma * h .* c .* I - 1/T_icu * C;
 
-    % dM_i/dt
+    % dD_i/dt
     dx(5*n+1:6*n) = gamma * m .* I + 1.5/T_osp * m .* H + 2/T_icu * m .* C;
 end

@@ -1,5 +1,5 @@
 function dx = SIRAgeFunction(t, x, beta, gamma, M, N)
-    n = size(M, 1); %dovrebbe essere 9
+    n = size(M, 1); 
     dx = zeros(3*n, 1);
     
     % Suddivisione del vettore di stato
